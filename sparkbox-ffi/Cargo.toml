@@ -1,0 +1,17 @@
+[package]
+name = "sparkbox-ffi"
+description = "C-ABI bindings for SparkBoxCore (cdylib/staticlib) — call the core from Flutter, Dart, C or any language with plain FFI. JSON in, JSON out."
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+repository.workspace = true
+
+[lib]
+name = "sparkbox_ffi"
+crate-type = ["cdylib", "staticlib"]
+
+[dependencies]
+sparkbox-core = { path = "../sparkbox-core" }
+serde = { workspace = true }
+serde_json = { workspace = true }
+tokio = { version = "1", features = ["rt-multi-thread"] }

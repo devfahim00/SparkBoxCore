@@ -1,0 +1,56 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  test:
+    name: Test & lint (Linux)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          components: rustfmt, clippy
+      - uses: Swatinem/rust-cache@v2
+      - name: Format
+        run: cargo fmt --all -- --check
+      - name: Clippy
+        run: cargo clippy --workspace --all-targets -- -D warnings
+      - name: Tests (incl. signing regression vectors)
+        run: cargo test --workspace
+      - name: Build FFI (desktop Linux)
+        run: cargo build --release -p sparkbox-ffi
+      - uses: actions/upload-artifact@v4
+        with:
+          name: sparkbox-ffi-linux-x86_64
+          path: |
+            target/release/libsparkbox_ffi.so
+            target/release/libsparkbox_ffi.a
+          if-no-files-found: error
+
+  android:
+    name: Android JNI libs
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: aarch64-linux-android,armv7-linux-androideabi,x86_64-linux-android,i686-linux-android
+      - uses: Swatinem/rust-cache@v2
+      - name: Install cargo-ndk
+        uses: taiki-e/install-action@v2
+        with:
+          tool: cargo-ndk
+      - name: Locate NDK
+        run: echo "ANDROID_NDK_HOME=$(ls -d ${ANDROID_HOME}/ndk/* | head -n 1)" >> "$GITHUB_ENV"
+      - name: Build all ABIs
+        run: |
+          cargo ndk -t arm64-v8a -t armeabi-v7a -t x86_64 -t x86 -o ./jniLibs build --release -p sparkbox-ffi
+      - uses: actions/upload-artifact@v4
+        with:
+          name: sparkbox-ffi-android-jniLibs
+          path: jniLibs/**/*.so
+          if-no-files-found: error

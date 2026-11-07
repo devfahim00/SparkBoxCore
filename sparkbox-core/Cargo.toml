@@ -1,0 +1,36 @@
+[package]
+name = "sparkbox-core"
+description = "SparkBox core: MovieBox API client — request signing, endpoints, parsing, stream & subtitle resolution. Everything that must change when the upstream service changes, extracted from the Flutter app so the app itself never has to."
+version.workspace = true
+edition.workspace = true
+rust-version.workspace = true
+repository.workspace = true
+readme = "../README.md"
+keywords = ["sparkbox", "moviebox", "streaming", "api-client"]
+categories = ["api-bindings", "multimedia"]
+
+[dependencies]
+serde = { workspace = true }
+serde_json = { workspace = true }
+tokio = { workspace = true }
+thiserror = { workspace = true }
+
+reqwest = { version = "0.12", default-features = false, features = [
+    "rustls-tls",
+    "gzip",
+    "http2",
+    "charset",
+] }
+url = "2"
+md-5 = "0.10"
+hmac = "0.12"
+base64 = "0.22"
+rand = "0.8"
+regex = "1"
+percent-encoding = "2"
+
+[dev-dependencies]
+tokio = { version = "1", features = ["rt-multi-thread", "macros"] }
+
+[[example]]
+name = "smoke"
