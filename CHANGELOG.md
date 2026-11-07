@@ -1,5 +1,26 @@
 # Changelog
 
+## Unreleased
+
+### Documentation
+
+- Full professional English documentation suite:
+  - README rewritten end-to-end (quick start, Flutter/C integration,
+    configuration, maintenance runbook, versioning policy).
+  - `docs/ARCHITECTURE.md` — design goals, system context, module map,
+    Dart → Rust provenance, runtime state model, data flows, deliberate
+    deviations from the Dart client.
+  - `docs/MOVIEBOX_PROTOCOL.md` — complete wire-protocol specification:
+    signing (with worked examples), token lifecycle, endpoint catalog,
+    home/detail/stream/subtitle algorithms, adult heuristic, maintenance
+    runbook.
+  - `docs/API_REFERENCE.md` — every public type, function and FFI symbol.
+  - `docs/INTEGRATION.md` — Flutter/Dart, C and Rust integration guides,
+    build matrix (desktop/Android/iOS), threading and update strategy.
+- Add `CONTRIBUTING.md` (style rules, layering table, testing expectations,
+  PR checklist).
+- Add MIT `LICENSE`.
+
 ## 0.1.0 — first extraction
 
 Core extracted from the SparkBox Flutter app (RMB `flutter` @ `1d675b8`) into Rust.

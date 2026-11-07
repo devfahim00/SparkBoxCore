@@ -13,17 +13,29 @@ use serde::{Deserialize, Serialize};
 #[derive(Debug, Clone, PartialEq, Eq, Default, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase", default)]
 pub struct MediaItem {
+    /// Subject id (`subjectId` upstream).
     pub id: String,
+    /// Display title.
     pub title: String,
+    /// `subject_type == 2`.
     pub is_series: bool,
+    /// Web detail path; the play flow needs it.
     pub detail_path: String,
+    /// Portrait cover image URL.
     pub cover: String,
+    /// Landscape backdrop image URL.
     pub backdrop: String,
+    /// IMDb rating as a string, e.g. `"7.4"`.
     pub rating: String,
+    /// Release year (first 4 chars of the release date).
     pub year: String,
+    /// Comma-separated genre names.
     pub genre: String,
+    /// Country of origin.
     pub country: String,
+    /// Synopsis.
     pub description: String,
+    /// Duration in minutes (rounded up from seconds).
     pub duration_min: i64,
     /// 1 movie, 2 series, 6 video.
     pub subject_type: i64,
@@ -46,7 +58,9 @@ impl MediaItem {
 #[derive(Debug, Clone, PartialEq, Default, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase", default)]
 pub struct HomeSection {
+    /// Row title (a section titled "banner" is renamed "Top Picks").
     pub title: String,
+    /// Items in this row.
     pub items: Vec<MediaItem>,
     /// Netflix-style numbered row.
     pub ranked: bool,
@@ -55,6 +69,7 @@ pub struct HomeSection {
 }
 
 impl HomeSection {
+    /// Build a section from its parts.
     pub fn new(
         title: impl Into<String>,
         items: Vec<MediaItem>,
@@ -74,8 +89,12 @@ impl HomeSection {
 #[derive(Debug, Clone, PartialEq, Eq, Default, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase", default)]
 pub struct Season {
+    /// 1-based season number.
     pub se: i64,
+    /// Highest episode number (derived from `episodes`).
     pub max_ep: i64,
+    /// Episode numbers — the explicit `allEp` list when the server sends one,
+    /// else `1..=maxEp`.
     pub episodes: Vec<i64>,
 }
 
@@ -83,10 +102,15 @@ pub struct Season {
 #[derive(Debug, Clone, PartialEq, Eq, Default, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase", default)]
 pub struct Detail {
+    /// Subject id.
     pub id: String,
+    /// Display title.
     pub title: String,
+    /// Web detail path used by the play endpoint.
     pub detail_path: String,
+    /// Origin the play endpoint lives on (`scheme://host`).
     pub h5_base: String,
+    /// Bearer token for play / CDN calls.
     pub h5_token: Option<String>,
     /// Diagnostics appended to "no streams" errors.
     pub note: String,
@@ -96,8 +120,11 @@ pub struct Detail {
 #[derive(Debug, Clone, PartialEq, Eq, Default, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase", default)]
 pub struct Dub {
+    /// Language name (`lanName` upstream, default "Dub").
     pub name: String,
+    /// Subject id of this dub variant.
     pub subject_id: String,
+    /// Web detail path of this dub variant.
     pub detail_path: String,
 }
 
@@ -105,7 +132,9 @@ pub struct Dub {
 #[derive(Debug, Clone, PartialEq, Eq, Default, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase", default)]
 pub struct CastMember {
+    /// Person name.
     pub name: String,
+    /// Avatar image URL.
     pub avatar_url: String,
 }
 
@@ -113,8 +142,11 @@ pub struct CastMember {
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Default, Serialize, Deserialize)]
 #[serde(rename_all = "lowercase")]
 pub enum StreamKind {
+    /// HTTP Live Streaming (`.m3u8`).
     Hls,
+    /// MPEG-DASH (`.mpd`).
     Dash,
+    /// Progressive MP4 download.
     #[default]
     Mp4,
 }
@@ -134,10 +166,13 @@ impl StreamKind {
 #[derive(Debug, Clone, PartialEq, Eq, Default, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase", default)]
 pub struct StreamLink {
+    /// `"{variant} · {quality}p|auto} · {KIND}"`, e.g. `"Original · 1080p · HLS"`.
     pub label: String,
-    /// 0 = adaptive / unknown.
+    /// Vertical resolution (first entry of `resolutions`); 0 = adaptive/unknown.
     pub quality: i64,
+    /// Manifest (mpd/m3u8) or progressive mp4 URL.
     pub url: String,
+    /// Container kind.
     pub kind: StreamKind,
     /// Headers required by the CDN (Referer/Origin/UA/signed token).
     pub headers: BTreeMap<String, String>,
@@ -154,8 +189,11 @@ impl StreamLink {
 #[derive(Debug, Clone, PartialEq, Default, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase", default)]
 pub struct DetailRich {
+    /// The (merged, enriched) subject.
     pub item: MediaItem,
+    /// Audio dub variants.
     pub dubs: Vec<Dub>,
+    /// Cast members (at most 15).
     pub cast: Vec<CastMember>,
 }
 
@@ -163,9 +201,13 @@ pub struct DetailRich {
 #[derive(Debug, Clone, PartialEq, Eq, Default, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase", default)]
 pub struct SearchItem {
+    /// Subject id.
     pub id: String,
+    /// Display title.
     pub title: String,
+    /// `subject_type == 2`.
     pub is_series: bool,
+    /// Web detail path (nested lookup).
     pub detail_path: String,
 }
 
@@ -173,7 +215,9 @@ pub struct SearchItem {
 #[derive(Debug, Clone, PartialEq, Eq, Default, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase", default)]
 pub struct SubtitleLink {
+    /// Language label (may carry a `" (n)"` suffix when duplicated).
     pub label: String,
+    /// Subtitle file URL.
     pub url: String,
 }
 
@@ -181,11 +225,13 @@ pub struct SubtitleLink {
 #[derive(Debug, Clone, PartialEq, Default, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase", default)]
 pub struct SearchResult {
+    /// Hits for this page.
     pub items: Vec<MediaItem>,
+    /// `pager.hasMore` from the web API; always `false` on the legacy fallback.
     pub has_more: bool,
 }
 
-/// Everything [`MovieBoxClient::streams`] resolves: playable links + subtitles.
+/// Everything [`crate::MovieBoxClient::streams`] resolves: playable links + subtitles.
 ///
 /// In the Flutter app the subtitle list arrived through a static side-channel
 /// (`MovieBoxApi.subtitles`); here it is returned with the links so the core
@@ -193,7 +239,9 @@ pub struct SearchResult {
 #[derive(Debug, Clone, PartialEq, Default, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase", default)]
 pub struct StreamsResult {
+    /// Playable links, "Original" variant first then quality desc.
     pub links: Vec<StreamLink>,
+    /// External subtitle tracks, de-duplicated by URL.
     pub subtitles: Vec<SubtitleLink>,
 }
 

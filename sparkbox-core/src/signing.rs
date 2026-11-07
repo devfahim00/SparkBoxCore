@@ -112,7 +112,7 @@ pub fn canonical(
 }
 
 /// `x-tr-signature` for a request. `key` is the base64-decoded signing key
-/// (see [`Config::secret_b64`]).
+/// (see [`crate::Config::secret_b64`]).
 pub fn signature(
     method: &str,
     accept: &str,
@@ -148,7 +148,7 @@ impl std::fmt::Display for CoreErrorish {
 /// The `x-client-info` JSON. Key order matches the Dart `jsonEncode` output
 /// (serde_json is built with `preserve_order`).
 ///
-/// `override_json` (from [`Config::client_info_v3`] / [`Config::client_info_v4`])
+/// `override_json` (from [`crate::Config::client_info_v3`] / [`crate::Config::client_info_v4`])
 /// wins when set.
 pub fn client_info(v4: bool, device_id: &str, override_json: Option<&str>) -> String {
     if let Some(json) = override_json {

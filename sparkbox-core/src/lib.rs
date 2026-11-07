@@ -31,6 +31,9 @@
 //! # }
 //! ```
 
+#![warn(missing_docs)]
+#![forbid(unsafe_code)]
+
 pub mod config;
 pub mod content_filter;
 pub mod error;
