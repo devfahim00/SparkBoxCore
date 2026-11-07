@@ -6,8 +6,7 @@
 
 **SparkBoxCore** is the standalone, protocol-level core of
 [SparkBox](https://github.com/devfahim00/SparkBox) — everything the app needs to
-talk to the MovieBox service, extracted from the Flutter app
-([RMB](https://github.com/devfahim00/RMB), `flutter` branch) and rewritten in
+talk to the MovieBox service and rewritten in
 Rust:
 
 - **request signing** (HMAC-MD5 over a canonical string, client tokens),
